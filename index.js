@@ -20,10 +20,9 @@ async function run() {
 
         const database = client.db('posterisksDB');
         const postersCollection = database.collection('posters');
-        //const Collection = database.collection('');
 
 
-        // -----Operations on postersCollection
+        // -----Operations on posters collection
         // getting all posters
         app.get('/posters', async (req, res) => {
             const cursor = postersCollection.find({});
