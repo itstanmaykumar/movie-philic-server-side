@@ -16,8 +16,26 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
-        console.log("db connected");
+        //console.log("db connected");
 
+        const database = client.db('posterisksDB');
+        const postersCollection = database.collection('posters');
+
+
+        // -----Operations on posters collection
+        // getting all posters
+        app.get('/posters', async (req, res) => {
+            const cursor = postersCollection.find({});
+            const posters = await cursor.toArray();
+            res.send(posters);
+        });
+        // getting single poster by id
+        app.get("/posters/:posterId", async (req, res) => {
+            const id = req.params.posterId;
+            const query = { _id: ObjectId(id) };
+            const singlePoster = await postersCollection.findOne(query);
+            res.send(singlePoster);
+        });
     }
     finally {
         // await client.close();
