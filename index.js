@@ -20,6 +20,7 @@ async function run() {
 
         const database = client.db('posterisksDB');
         const postersCollection = database.collection('posters');
+        //const Collection = database.collection('');
 
 
         // -----Operations on posters collection
