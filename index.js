@@ -23,7 +23,7 @@ async function run() {
         //const Collection = database.collection('');
 
 
-        // -----Operations on posters collection
+        // -----Operations on postersCollection
         // getting all posters
         app.get('/posters', async (req, res) => {
             const cursor = postersCollection.find({});
