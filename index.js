@@ -39,7 +39,7 @@ async function run() {
         // updating poster quantity
         app.put("/posters/:posterId", async (req, res) => {
             const id = req.params.posterId;
-            const newQuantity = req.body;
+            const newQuantity = parseInt(req.body);
             const query = { _id: ObjectId(id) };
             const updateDoc = {
                 $set: {
