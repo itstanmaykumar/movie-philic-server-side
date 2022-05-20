@@ -36,6 +36,19 @@ async function run() {
             const singlePoster = await postersCollection.findOne(query);
             res.send(singlePoster);
         });
+        // updating poster quantity
+        app.put("/posters/:posterId", async (req, res) => {
+            const id = req.params.posterId;
+            const newQuantity = req.body;
+            const query = { _id: ObjectId(id) };
+            const updateDoc = {
+                $set: {
+                    quantity: newQuantity
+                }
+            };
+            const updateStatus = await postersCollection.updateOne(query, updateDoc);
+            res.send(updateStatus);
+        });
     }
     finally {
         // await client.close();
