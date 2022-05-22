@@ -43,6 +43,12 @@ async function run() {
             const deletePoster = await postersCollection.deleteOne(query);
             res.send(deletePoster);
         });
+        //adding new poster
+        app.post("/posters", async (req, res) => {
+            const currentProduct = req.body;
+            const product = await postersCollection.insertOne(currentProduct);
+            res.json(product);
+        });
         // updating poster quantity
         app.put("/posters/:posterId", async (req, res) => {
             const id = req.params.posterId;
