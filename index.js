@@ -12,19 +12,21 @@ app.use(cors());
 app.use(express.json());
 
 function verifyJWT(req, res, next) {
-    const authorization = req.headers.authorization;
-    if (!authorization) {
-        return res.status(401).send({ message: "Unauhtorized Access!" });
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        return res.status(401).send({ message: 'unauthorized access' });
     }
-    const authToken = authorization.split(" ")[1];
-    jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
+    const token = authHeader.split(' ')[1];
+    jwt.verify(token, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
-            return res.status(403).send({ message: "Forbidden Access!" });
+            return res.status(403).send({ message: 'Forbidden access' });
         }
+        console.log('decoded', decoded);
         req.decoded = decoded;
         next();
-    });
+    })
 }
+
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@posterisks.o0zsr.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -37,6 +39,16 @@ async function run() {
         const database = client.db('posterisksDB');
         const postersCollection = database.collection('posters');
 
+
+
+
+        app.post('/login', async (req, res) => {
+            const user = req.body;
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
+                expiresIn: '1d'
+            });
+            res.send({ accessToken });
+        });
 
         // -----Operations on postersCollection
         // getting all posters
@@ -78,16 +90,17 @@ async function run() {
             await postersCollection.updateOne(query, updateDoc);
         });
         //getting my products by jwt
-        app.get("/myproducts", verifyJWT, async (req, res) => {
-            const decodedAuthEmail = req.decoded.email;
-            const user = req.query.email;
-            if (decodedAuthEmail === user) {
-                const query = { productAdmin: user };
-                const cursor = postersCollection.find(query);
-                const myProducts = await cursor.toArray();
-                res.send(myProducts);
-            } else {
-                res.status(403).send({ message: "Forbidden Access!" });
+        app.get('/myproducts', verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email;
+            const email = req.query.email;
+            if (email === decodedEmail) {
+                const query = { email: email };
+                const cursor = posterCollection.find(query);
+                const posters = await cursor.toArray();
+                res.send(posters);
+            }
+            else {
+                res.status(403).send({ message: 'forbidden access' });
             }
         });
 
