@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
+const jwt = require("jsonwebtoken");
 
 require('dotenv').config();
 
@@ -9,6 +10,21 @@ const app = express();
 
 app.use(cors());
 app.use(express.json());
+
+function verifyJWT(req, res, next) {
+    const authorization = req.headers.authorization;
+    if (!authorization) {
+        return res.status(401).send({ message: "Unauhtorized Access!" });
+    }
+    const authToken = authorization.split(" ")[1];
+    jwt.verify(authToken, process.env.TOKEN_SECRET, (err, decoded) => {
+        if (err) {
+            return res.status(403).send({ message: "Forbidden Access!" });
+        }
+        req.decoded = decoded;
+        next();
+    });
+}
 
 const uri = `mongodb+srv://${process.env.DB_USER}:${process.env.DB_PASS}@posterisks.o0zsr.mongodb.net/?retryWrites=true&w=majority`;
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true, serverApi: ServerApiVersion.v1 });
@@ -61,6 +77,22 @@ async function run() {
             };
             await postersCollection.updateOne(query, updateDoc);
         });
+        //getting my products by jwt
+        app.get("/myproducts", verifyJWT, async (req, res) => {
+            const decodedAuthEmail = req.decoded.email;
+            const user = req.query.email;
+            if (decodedAuthEmail === user) {
+                const query = { productAdmin: user };
+                const cursor = items.find(query);
+                const products = await cursor.toArray();
+                res.send(products);
+            } else {
+                res.status(403).send({ message: "Forbidden Access!" });
+            }
+        });
+
+
+
     }
     finally {
         // await client.close();
