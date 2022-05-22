@@ -83,9 +83,9 @@ async function run() {
             const user = req.query.email;
             if (decodedAuthEmail === user) {
                 const query = { productAdmin: user };
-                const cursor = items.find(query);
-                const products = await cursor.toArray();
-                res.send(products);
+                const cursor = postersCollection.find(query);
+                const myProducts = await cursor.toArray();
+                res.send(myProducts);
             } else {
                 res.status(403).send({ message: "Forbidden Access!" });
             }
