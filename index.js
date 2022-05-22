@@ -94,8 +94,8 @@ async function run() {
             const decodedEmail = req.decoded.email;
             const email = req.query.email;
             if (email === decodedEmail) {
-                const query = { email: email };
-                const cursor = posterCollection.find(query);
+                const query = { admin: email };
+                const cursor = postersCollection.find(query);
                 const posters = await cursor.toArray();
                 res.send(posters);
             }
