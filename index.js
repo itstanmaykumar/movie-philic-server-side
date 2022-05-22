@@ -17,7 +17,7 @@ function verifyJWT(req, res, next) {
         return res.status(401).send({ message: "Unauhtorized Access!" });
     }
     const authToken = authorization.split(" ")[1];
-    jwt.verify(authToken, process.env.TOKEN_SECRET, (err, decoded) => {
+    jwt.verify(authToken, process.env.ACCESS_TOKEN_SECRET, (err, decoded) => {
         if (err) {
             return res.status(403).send({ message: "Forbidden Access!" });
         }
