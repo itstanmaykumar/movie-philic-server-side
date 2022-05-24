@@ -92,7 +92,7 @@ async function run() {
         //getting my products by jwt
         app.get('/myproducts', verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
-            const email = req.query.email;
+            const email = req.query.admin;
             if (email === decodedEmail) {
                 const query = { admin: email };
                 const cursor = postersCollection.find(query);
@@ -100,7 +100,7 @@ async function run() {
                 res.send(posters);
             }
             else {
-                res.status(403).send({ message: 'forbidden access' });
+                res.status(403).send({ message: 'forbidden access' })
             }
         });
 
