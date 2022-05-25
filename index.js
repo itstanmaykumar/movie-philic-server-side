@@ -44,9 +44,7 @@ async function run() {
 
         app.post('/signin', async (req, res) => {
             const user = req.body;
-            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET, {
-                expiresIn: '1d'
-            });
+            const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
             res.send({ accessToken });
         });
 
@@ -90,18 +88,18 @@ async function run() {
             await postersCollection.updateOne(query, updateDoc);
         });
         //getting my products by jwt
-        app.get('/myproducts', async (req, res) => {
-            //const decodedEmail = req.decoded.email;
+        app.get('/myproducts', verifyJWT, async (req, res) => {
+            const decodedEmail = req.decoded.email;
             const email = req.query.admin;
-            //if (email === decodedEmail) {
-            const query = { admin: email };
-            const cursor = postersCollection.find(query);
-            const posters = await cursor.toArray();
-            res.send(posters);
-            //}
-            //else {
-            //    res.status(403).send({ message: 'forbidden access' })
-            //}
+            if (email === decodedEmail) {
+                const query = { admin: email };
+                const cursor = postersCollection.find(query);
+                const posters = await cursor.toArray();
+                res.send(posters);
+            }
+            else {
+                res.status(403).send({ message: 'forbidden access' })
+            }
         });
 
 
