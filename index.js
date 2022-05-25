@@ -93,15 +93,15 @@ async function run() {
         app.get('/myproducts', verifyJWT, async (req, res) => {
             const decodedEmail = req.decoded.email;
             const email = req.query.admin;
-            if (email === decodedEmail) {
-                const query = { admin: email };
-                const cursor = postersCollection.find(query);
-                const posters = await cursor.toArray();
-                res.send(posters);
-            }
-            else {
-                res.status(403).send({ message: 'forbidden access' })
-            }
+            //if (email === decodedEmail) {
+            const query = { admin: email };
+            const cursor = postersCollection.find(query);
+            const posters = await cursor.toArray();
+            res.send(posters);
+            //}
+            //else {
+            //    res.status(403).send({ message: 'forbidden access' })
+            //}
         });
 
 
