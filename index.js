@@ -11,6 +11,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+//verying jwt token
 function verifyJWT(req, res, next) {
     const authHeader = req.headers.authorization;
     if (!authHeader) {
@@ -41,7 +42,7 @@ async function run() {
 
 
 
-
+        //using jwt token
         app.post('/signin', async (req, res) => {
             const user = req.body;
             const accessToken = jwt.sign(user, process.env.ACCESS_TOKEN_SECRET);
