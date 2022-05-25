@@ -90,8 +90,8 @@ async function run() {
             await postersCollection.updateOne(query, updateDoc);
         });
         //getting my products by jwt
-        app.get('/myproducts', verifyJWT, async (req, res) => {
-            const decodedEmail = req.decoded.email;
+        app.get('/myproducts', async (req, res) => {
+            //const decodedEmail = req.decoded.email;
             const email = req.query.admin;
             //if (email === decodedEmail) {
             const query = { admin: email };
